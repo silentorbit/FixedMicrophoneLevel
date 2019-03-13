@@ -36,6 +36,8 @@ namespace SilentOrbit.FixVolume
 
                 var ctrl = new CoreAudioController();
 
+                context.Info(1000, "Active", "Forcing all capture levels to 100%");
+
                 while (true)
                 {
                     //Communication capture
