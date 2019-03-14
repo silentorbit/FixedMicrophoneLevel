@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -19,12 +20,13 @@ namespace SilentOrbit.FixVolume
         {
             autoStart = new MenuItem("&Auto Start", ToggleAutoStart);
             mute = new MenuItem("&Mute", (s, e) => VolumeWatcher.ToggleMute());
+            var about = new MenuItem("About", (s, e) => Process.Start("https://github.com/hultqvist/FixVolume"));
             var exit = new MenuItem("E&xit", (s, e) => Application.Exit());
 
             trayIcon = new NotifyIcon()
             {
                 Icon = StartupInactive,
-                ContextMenu = new ContextMenu(new MenuItem[] { autoStart, mute, exit }),
+                ContextMenu = new ContextMenu(new MenuItem[] { autoStart, mute, about, exit }),
                 Visible = true
             };
 
@@ -34,7 +36,16 @@ namespace SilentOrbit.FixVolume
                 mute.Checked = VolumeWatcher.Volume == 0;
             };
 
-            trayIcon.Click += (s, e) => VolumeWatcher.ToggleMute();
+            trayIcon.Click += TrayIcon_Click;
+        }
+
+        void TrayIcon_Click(object sender, EventArgs e)
+        {
+            if (e is MouseEventArgs m)
+            {
+                if (m.Button == MouseButtons.Left)
+                    VolumeWatcher.ToggleMute();
+            }
         }
 
         protected override void Dispose(bool disposing)
