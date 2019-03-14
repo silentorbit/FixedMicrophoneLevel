@@ -53,9 +53,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlobalHotKey.cs" />
     <Compile Include="NotifyIconContext.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegAutoStart.cs" />
+    <Compile Include="Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="VolumeWatcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AudioSwitcher.AudioApi.CoreAudio">
@@ -64,6 +72,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mic off.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mic on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mic gray.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

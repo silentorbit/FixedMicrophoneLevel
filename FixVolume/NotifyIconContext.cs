@@ -6,60 +6,94 @@ namespace SilentOrbit.FixVolume
 {
     internal class NotifyIconContext : ApplicationContext
     {
-        readonly NotifyIcon trayIcon;
+        static NotifyIcon trayIcon;
 
-        readonly Icon Red = GenerateIcon(Color.Red);
-        readonly Icon Blue = GenerateIcon(Color.Blue);
-        readonly Icon Yellow = GenerateIcon(Color.Yellow);
+        static readonly Icon StartupInactive = Icon.FromHandle(Resource.mic_gray.GetHicon());
+        static readonly Icon Muted = Icon.FromHandle(Resource.mic_off.GetHicon());
+        static readonly Icon FullVolume = Icon.FromHandle(Resource.mic_on.GetHicon());
+
+        readonly MenuItem autoStart;
+        readonly MenuItem mute;
 
         public NotifyIconContext()
         {
+            autoStart = new MenuItem("&Auto Start", ToggleAutoStart);
+            mute = new MenuItem("&Mute", (s, e) => VolumeWatcher.ToggleMute());
+            var exit = new MenuItem("E&xit", (s, e) => Application.Exit());
+
             trayIcon = new NotifyIcon()
             {
-                Icon = GenerateIcon(Color.Red),
-                ContextMenu = new ContextMenu(new MenuItem[] { new MenuItem("Exit", Exit) }),
+                Icon = StartupInactive,
+                ContextMenu = new ContextMenu(new MenuItem[] { autoStart, mute, exit }),
                 Visible = true
             };
+
+            trayIcon.ContextMenu.Popup += (object sender, EventArgs e) =>
+            {
+                autoStart.Checked = RegAutoStart.Get();
+                mute.Checked = VolumeWatcher.Volume == 0;
+            };
+
+            trayIcon.Click += (s, e) => VolumeWatcher.ToggleMute();
         }
 
-        internal void Exit(object sender, EventArgs e)
+        protected override void Dispose(bool disposing)
         {
+            //Remove tray icon at exit
             trayIcon.Visible = false;
-            Application.Exit();
+
+            base.Dispose(disposing);
         }
 
-        public void Error(int timeout, string title, string message)
+        void ToggleAutoStart(object sender, EventArgs e)
+        {
+            var val = RegAutoStart.Get();
+
+            if (val)
+                RegAutoStart.Remove();
+            else
+                RegAutoStart.Set();
+        }
+
+        #region Messaging
+
+        internal static void ToolTip(string message)
+        {
+            trayIcon.Text = message;
+        }
+
+        public static void Error(int timeout, string title, string message)
         {
             trayIcon.ShowBalloonTip(timeout, title, message, ToolTipIcon.Error);
             trayIcon.Text = title + ": " + message;
-            trayIcon.Icon = Red;
         }
 
-        public void Info(int timeout, string title, string message)
+        public static void Info(int timeout, string title, string message)
         {
             trayIcon.ShowBalloonTip(timeout, title, message, ToolTipIcon.Info);
             trayIcon.Text = title + ": " + message;
-            trayIcon.Icon = Blue;
         }
 
-        public void Warning(int timeout, string title, string message)
+        public static void Warning(int timeout, string title, string message)
         {
             trayIcon.ShowBalloonTip(timeout, title, message, ToolTipIcon.Warning);
             trayIcon.Text = title + ": " + message;
-            trayIcon.Icon = Yellow;
         }
 
-        static Icon GenerateIcon(Color color)
+        public static void Volume(int volume)
         {
-            using (Bitmap b = new Bitmap(32, 32))
-            {
-                using (var g = Graphics.FromImage(b))
-                {
-                    g.Clear(color);
-                }
+            //Hack, hide previous messages
+            trayIcon.Visible = false;
+            trayIcon.Visible = true;
 
-                return Icon.FromHandle(b.GetHicon());
-            }
+            var title = volume == 0 ? "Muted" : "Full Volume";
+            var message = volume + " %";
+
+            trayIcon.ShowBalloonTip(100, title, message, ToolTipIcon.Info);
+            trayIcon.Text = title + ": " + message;
+            trayIcon.Icon = volume == 0 ? Muted : FullVolume;
         }
+
+        #endregion
     }
 }
