@@ -11,8 +11,17 @@ namespace SilentOrbit.FixVolume
 {
     static class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
+            if (args.Length == 1)
+            {
+                if (args[0] == RegMapCapsLock.CommandMap)
+                    RegMapCapsLock.SetCommandLine();
+                if (args[0] == RegMapCapsLock.CommandReset)
+                    RegMapCapsLock.ResetCommandLine();
+                return 0;
+            }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
@@ -21,6 +30,7 @@ namespace SilentOrbit.FixVolume
             using (var hotkey = new GlobalHotKey())
             {
                 Application.Run(context);
+                return 0;
             }
         }
     }

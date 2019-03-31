@@ -14,11 +14,19 @@ namespace SilentOrbit.FixVolume
         static readonly Icon FullVolume = Icon.FromHandle(Resource.mic_on.GetHicon());
 
         readonly MenuItem autoStart;
+        readonly MenuItem mapCapsLock;
+        readonly MenuItem mapCapsLockSet;
+        readonly MenuItem mapCapsLockReset;
         readonly MenuItem mute;
 
         public NotifyIconContext()
         {
             autoStart = new MenuItem("&Auto Start", ToggleAutoStart);
+            mapCapsLock = new MenuItem("Map &CapsLock");
+            mapCapsLockSet = new MenuItem("To F13", MapCapsLock);
+            mapCapsLockReset = new MenuItem("Reset CapsLock", ResetCapsLock);
+            mapCapsLock.MenuItems.Add(mapCapsLockSet);
+            mapCapsLock.MenuItems.Add(mapCapsLockReset);
             mute = new MenuItem("&Mute", (s, e) => VolumeWatcher.ToggleMute());
             var about = new MenuItem("About", (s, e) => Process.Start("https://github.com/hultqvist/FixVolume"));
             var exit = new MenuItem("E&xit", (s, e) => Application.Exit());
@@ -26,7 +34,7 @@ namespace SilentOrbit.FixVolume
             trayIcon = new NotifyIcon()
             {
                 Icon = StartupInactive,
-                ContextMenu = new ContextMenu(new MenuItem[] { autoStart, mute, about, exit }),
+                ContextMenu = new ContextMenu(new MenuItem[] { autoStart, mapCapsLock, mute, about, exit }),
                 Visible = true
             };
 
@@ -64,6 +72,18 @@ namespace SilentOrbit.FixVolume
                 RegAutoStart.Remove();
             else
                 RegAutoStart.Set();
+        }
+
+        void MapCapsLock(object sender, EventArgs e)
+        {
+            RegMapCapsLock.Set();
+            trayIcon.ShowBalloonTip(10000, "Restart Windows", "Log out and back in to activate the map.", ToolTipIcon.Info);
+        }
+
+        void ResetCapsLock(object sender, EventArgs e)
+        {
+            RegMapCapsLock.Reset();
+            trayIcon.ShowBalloonTip(10000, "Restart Windows", "Log out and back in to complete the reset.", ToolTipIcon.Info);
         }
 
         #region Messaging

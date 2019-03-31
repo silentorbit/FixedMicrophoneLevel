@@ -10,54 +10,57 @@ namespace SilentOrbit.FixVolume
 {
     class GlobalHotKey : NativeWindow, IDisposable
     {
-        // Registers a hot key with Windows.
         [DllImport("user32.dll")]
-        private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
-        // Unregisters the hot key with Windows.
+        static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
         [DllImport("user32.dll")]
-        private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+        static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
         private static int WM_HOTKEY = 0x0312;
-        const int currentId = 1;
-
-        //Mute hotkey
-        const ModifierKeys muteModifier = ModifierKeys.Win;
-        const Keys muteKey = Keys.Insert;
-
+        int currentId = 0;
 
         public GlobalHotKey()
         {
-            // create the handle for the window.
             this.CreateHandle(new CreateParams());
 
-            if (!RegisterHotKey(Handle, currentId, (uint)muteModifier, (uint)muteKey))
-                NotifyIconContext.Error(10000, "HotKey Error", "Failed to register hotkey " + muteModifier + " + " + muteKey);
+            RegisterHotKey(ModifierKeys.Win, Keys.Insert);
+
+            //Use windows
+            RegisterHotKey(ModifierKeys.None, Keys.F13);
+
+            RegisterHotKey(ModifierKeys.None, Keys.CapsLock);
+        }
+
+        void RegisterHotKey(ModifierKeys mod, Keys key)
+        {
+            currentId++;
+            if (!RegisterHotKey(Handle, currentId, (uint)mod, (uint)key))
+                NotifyIconContext.Error(10000, "HotKey Error", "Failed to register hotkey " + mod + " + " + key);
         }
 
         public void Dispose()
         {
-            UnregisterHotKey(Handle, currentId);
+            while (currentId > 0)
+            {
+                UnregisterHotKey(Handle, currentId);
+                currentId--;
+            }
 
             this.DestroyHandle();
         }
 
-        /// <summary>
-        /// Overridden to get the notifications.
-        /// </summary>
-        /// <param name="m"></param>
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
 
-            // check if we got a hot key pressed.
             if (m.Msg == WM_HOTKEY)
             {
-                // get the keys.
                 Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
                 ModifierKeys modifier = (ModifierKeys)((int)m.LParam & 0xFFFF);
 
-                // invoke the event to notify the parent.
-                if (modifier == muteModifier && key == muteKey)
+                if (key == Keys.CapsLock)
+                    VolumeWatcher.SetMute(Control.IsKeyLocked(Keys.CapsLock));
+                else
                     VolumeWatcher.ToggleMute();
             }
         }
@@ -65,6 +68,7 @@ namespace SilentOrbit.FixVolume
         [Flags]
         enum ModifierKeys : uint
         {
+            None = 0,
             Alt = 1,
             Control = 2,
             Shift = 4,

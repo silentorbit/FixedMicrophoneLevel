@@ -1,6 +1,7 @@
 ﻿using AudioSwitcher.AudioApi.CoreAudio;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -99,12 +100,17 @@ namespace SilentOrbit.FixVolume
 
         internal static void ToggleMute()
         {
+            SetMute(Volume != 0);
+        }
+
+        internal static void SetMute(bool muted)
+        {
             reportVolumeFix = false;
 
-            if (Volume == 0)
-                Volume = 100;
-            else
+            if (muted)
                 Volume = 0;
+            else
+                Volume = 100;
 
             SetVolume();
 
