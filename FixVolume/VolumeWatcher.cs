@@ -16,6 +16,12 @@ namespace SilentOrbit.FixVolume
 
         public static int Volume { get; private set; } = 100;
 
+        public static bool Muted
+        {
+            get => Volume == 0;
+            set => SetMute(value);
+        }
+
         static CoreAudioController audio;
 
         public VolumeWatcher()
@@ -100,10 +106,10 @@ namespace SilentOrbit.FixVolume
 
         internal static void ToggleMute()
         {
-            SetMute(Volume != 0);
+            Muted = !Muted;
         }
 
-        internal static void SetMute(bool muted)
+        static void SetMute(bool muted)
         {
             reportVolumeFix = false;
 

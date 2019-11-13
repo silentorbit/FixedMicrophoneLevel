@@ -28,6 +28,8 @@ namespace SilentOrbit.FixVolume
             using (var context = new NotifyIconContext())
             using (var volume = new VolumeWatcher())
             using (var hotkey = new GlobalHotKey())
+            using (var timer = new MuteTimer())
+            using (var keymon = new KeyMonitoring())
             {
                 Application.Run(context);
                 return 0;

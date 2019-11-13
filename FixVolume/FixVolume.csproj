@@ -54,6 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GlobalHotKey.cs" />
+    <Compile Include="KeyMonitoring.cs" />
+    <Compile Include="MuteTimer.cs" />
     <Compile Include="NotifyIconContext.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
