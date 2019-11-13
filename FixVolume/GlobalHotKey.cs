@@ -59,7 +59,7 @@ namespace SilentOrbit.FixVolume
                 ModifierKeys modifier = (ModifierKeys)((int)m.LParam & 0xFFFF);
 
                 if (key == Keys.CapsLock)
-                    VolumeWatcher.SetMute(Control.IsKeyLocked(Keys.CapsLock));
+                    VolumeWatcher.Muted = Control.IsKeyLocked(Keys.CapsLock);
                 else
                     VolumeWatcher.ToggleMute();
             }

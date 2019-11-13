@@ -18,33 +18,42 @@ namespace SilentOrbit.FixVolume
         readonly MenuItem mapCapsLockSet;
         readonly MenuItem mapCapsLockReset;
         readonly MenuItem mute;
+        readonly MenuItem autoMute;
 
         public NotifyIconContext()
         {
             autoStart = new MenuItem("&Auto Start", ToggleAutoStart);
+            autoMute = new MenuItem("Auto mute on key presses", ToggleAutoMute);
             mapCapsLock = new MenuItem("Map &CapsLock");
             mapCapsLockSet = new MenuItem("To F13", MapCapsLock);
             mapCapsLockReset = new MenuItem("Reset CapsLock", ResetCapsLock);
             mapCapsLock.MenuItems.Add(mapCapsLockSet);
             mapCapsLock.MenuItems.Add(mapCapsLockReset);
             mute = new MenuItem("&Mute", (s, e) => VolumeWatcher.ToggleMute());
+            
             var about = new MenuItem("About", (s, e) => Process.Start("https://github.com/hultqvist/FixVolume"));
             var exit = new MenuItem("E&xit", (s, e) => Application.Exit());
 
             trayIcon = new NotifyIcon()
             {
                 Icon = StartupInactive,
-                ContextMenu = new ContextMenu(new MenuItem[] { autoStart, mapCapsLock, mute, about, exit }),
+                ContextMenu = new ContextMenu(new MenuItem[] { autoStart, autoMute, mapCapsLock, mute, about, exit }),
                 Visible = true
             };
 
             trayIcon.ContextMenu.Popup += (object sender, EventArgs e) =>
             {
                 autoStart.Checked = RegAutoStart.Get();
+                autoMute.Checked = KeyMonitoring.Enabled;
                 mute.Checked = VolumeWatcher.Volume == 0;
             };
 
             trayIcon.Click += TrayIcon_Click;
+        }
+
+        void ToggleAutoMute(object sender, EventArgs e)
+        {
+            KeyMonitoring.Enabled = !KeyMonitoring.Enabled;
         }
 
         void TrayIcon_Click(object sender, EventArgs e)
