@@ -51,7 +51,7 @@ namespace SilentOrbit.FixVolume
 
                     while (true)
                     {
-                        SetVolume();
+                        UpdateVolume(reportVolumeFix: true);
                         Thread.Sleep(1000);
                     }
                 }
@@ -68,7 +68,7 @@ namespace SilentOrbit.FixVolume
             }
         }
 
-        static void SetVolume()
+        static void UpdateVolume(bool reportVolumeFix)
         {
             if (audio == null)
                 return;
@@ -76,7 +76,7 @@ namespace SilentOrbit.FixVolume
             //Communication capture
             {
                 var dev = audio.GetDefaultDevice(AudioSwitcher.AudioApi.DeviceType.Capture, AudioSwitcher.AudioApi.Role.Communications);
-                FixVolume(dev);
+                UpdateVolume(dev, reportVolumeFix);
             }
             foreach (var dev in audio.GetDevices())
             {
@@ -85,24 +85,24 @@ namespace SilentOrbit.FixVolume
 
                 if ((dev.DeviceType & AudioSwitcher.AudioApi.DeviceType.Capture) != 0)
                 {
-                    FixVolume(dev);
+                    UpdateVolume(dev, reportVolumeFix);
                 }
             }
         }
 
-        static void FixVolume(CoreAudioDevice dev)
+        static void UpdateVolume(CoreAudioDevice dev, bool reportVolumeFix)
         {
-            var orig = dev.Volume;
+            var orig = dev.IsMuted ? 0 : dev.Volume;
             if (orig != Volume)
             {
-                dev.Volume = Volume;
+                dev.Mute(Volume == 0);
+                if (Volume != 0)
+                    dev.Volume = Volume;
 
                 if (reportVolumeFix)
                     NotifyIconContext.Warning(5000, "Forced volume " + orig + " --> " + Volume + " %", dev.FullName);
             }
         }
-
-        static bool reportVolumeFix = true;
 
         internal static void ToggleMute()
         {
@@ -111,18 +111,14 @@ namespace SilentOrbit.FixVolume
 
         static void SetMute(bool muted)
         {
-            reportVolumeFix = false;
-
             if (muted)
                 Volume = 0;
             else
                 Volume = 100;
 
-            SetVolume();
+            UpdateVolume(reportVolumeFix: false);
 
             NotifyIconContext.Volume(Volume);
-
-            reportVolumeFix = true;
         }
     }
 }
