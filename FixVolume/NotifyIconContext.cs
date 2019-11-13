@@ -30,7 +30,7 @@ namespace SilentOrbit.FixVolume
             mapCapsLock.MenuItems.Add(mapCapsLockSet);
             mapCapsLock.MenuItems.Add(mapCapsLockReset);
             mute = new MenuItem("&Mute", (s, e) => VolumeWatcher.ToggleMute());
-            
+
             var about = new MenuItem("About", (s, e) => Process.Start("https://github.com/hultqvist/FixVolume"));
             var exit = new MenuItem("E&xit", (s, e) => Application.Exit());
 
@@ -99,25 +99,36 @@ namespace SilentOrbit.FixVolume
 
         internal static void ToolTip(string message)
         {
-            trayIcon.Text = message;
+            Text = message;
         }
 
         public static void Error(int timeout, string title, string message)
         {
             trayIcon.ShowBalloonTip(timeout, title, message, ToolTipIcon.Error);
-            trayIcon.Text = title + ": " + message;
+            Text = title + ": " + message;
         }
 
         public static void Info(int timeout, string title, string message)
         {
             trayIcon.ShowBalloonTip(timeout, title, message, ToolTipIcon.Info);
-            trayIcon.Text = title + ": " + message;
+            Text = title + ": " + message;
         }
 
         public static void Warning(int timeout, string title, string message)
         {
             trayIcon.ShowBalloonTip(timeout, title, message, ToolTipIcon.Warning);
-            trayIcon.Text = title + ": " + message;
+            Text = title + ": " + message;
+        }
+
+        public static string Text
+        {
+            set
+            {
+                var t = value;
+                if (t.Length > 63)
+                    t = t.Substring(0, 63);
+                trayIcon.Text = t;
+            }
         }
 
         public static void Volume(int volume)
@@ -130,7 +141,7 @@ namespace SilentOrbit.FixVolume
             var message = volume + " %";
 
             trayIcon.ShowBalloonTip(100, title, message, ToolTipIcon.Info);
-            trayIcon.Text = title + ": " + message;
+            Text = title + ": " + message;
             trayIcon.Icon = volume == 0 ? Muted : FullVolume;
         }
 
