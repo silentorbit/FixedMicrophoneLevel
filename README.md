@@ -1,6 +1,6 @@
 ﻿# FixVolume
 
-Force all microphones levels to either 0% or 100%.
+Force all microphone levels to either 0% or 100%.
 
 For Windows.
 
