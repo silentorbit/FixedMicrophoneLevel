@@ -1,8 +1,12 @@
-﻿# FixVolume
+﻿# Fixed Microphone Level
+
+A Small Windows program located in your system tray.
+
+ * Makes sure your microphone level is alaways at a fixed level you decide
+ * Hotkey to toggle mute on/off
+ * Auto mute when you're typing (optional)
 
 Force all microphone levels to stay fixed.
-
-For Windows.
 
 ## Microphone level control
 
