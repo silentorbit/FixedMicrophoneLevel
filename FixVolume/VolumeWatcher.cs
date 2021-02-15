@@ -14,13 +14,9 @@ namespace SilentOrbit.FixVolume
     {
         readonly Thread t;
 
+        public static int Target => Muted ? 0 : Volume;
         public static int Volume { get; private set; } = 100;
-
-        public static bool Muted
-        {
-            get => Volume == 0;
-            set => SetMute(value);
-        }
+        public static bool Muted { get; private set; }
 
         static CoreAudioController audio;
 
@@ -47,7 +43,7 @@ namespace SilentOrbit.FixVolume
                     audio = ctrl;
 
                     //NotifyIconContext.Info(1000, "Active", "Forcing all capture levels to " + Volume + "%");
-                    NotifyIconContext.Volume(Volume);
+                    NotifyIconContext.Volume(Target);
 
                     while (true)
                     {
@@ -93,32 +89,36 @@ namespace SilentOrbit.FixVolume
         static void UpdateVolume(CoreAudioDevice dev, bool reportVolumeFix)
         {
             var orig = dev.IsMuted ? 0 : dev.Volume;
-            if (orig != Volume)
+            if (orig != Target)
             {
-                dev.Mute(Volume == 0);
-                if (Volume != 0)
-                    dev.Volume = Volume;
+                dev.Mute(Target == 0);
+                if (Target != 0)
+                    dev.Volume = Target;
 
                 if (reportVolumeFix)
-                    NotifyIconContext.Warning(5000, "Forced volume " + orig + " --> " + Volume + " %", dev.FullName);
+                    NotifyIconContext.Warning(5000, "Forced volume " + orig + " --> " + Target + " %", dev.FullName);
             }
         }
 
-        internal static void ToggleMute()
-        {
-            Muted = !Muted;
-        }
+        public static void ToggleMute() => SetMuted(!Muted);
 
-        static void SetMute(bool muted)
+        public static void SetMuted(bool muted)
         {
-            if (muted)
-                Volume = 0;
-            else
-                Volume = 100;
+            Muted = muted;
 
             UpdateVolume(reportVolumeFix: false);
 
-            NotifyIconContext.Volume(Volume);
+            NotifyIconContext.Volume(Target);
+        }
+
+        public static void SetVolume(int volume)
+        {
+            Muted = false;
+            Volume = volume;
+
+            UpdateVolume(reportVolumeFix: false);
+
+            NotifyIconContext.Volume(Target);
         }
     }
 }

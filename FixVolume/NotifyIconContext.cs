@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -13,6 +14,7 @@ namespace SilentOrbit.FixVolume
         static readonly Icon Muted = Icon.FromHandle(Resource.mic_off.GetHicon());
         static readonly Icon FullVolume = Icon.FromHandle(Resource.mic_on.GetHicon());
 
+        readonly MenuItem volume;
         readonly MenuItem autoStart;
         readonly MenuItem mapCapsLock;
         readonly MenuItem mapCapsLockSet;
@@ -22,6 +24,8 @@ namespace SilentOrbit.FixVolume
 
         public NotifyIconContext()
         {
+            volume = new MenuItem("&Volume");
+            BuildVolumeMenu(volume);
             autoStart = new MenuItem("&Auto Start", ToggleAutoStart);
             autoMute = new MenuItem("Auto mute on key presses", ToggleAutoMute);
             mapCapsLock = new MenuItem("Map &CapsLock");
@@ -37,7 +41,7 @@ namespace SilentOrbit.FixVolume
             trayIcon = new NotifyIcon()
             {
                 Icon = StartupInactive,
-                ContextMenu = new ContextMenu(new MenuItem[] { autoStart, autoMute, mapCapsLock, mute, about, exit }),
+                ContextMenu = new ContextMenu(new MenuItem[] { volume, mute, autoMute, autoStart, mapCapsLock, about, exit }),
                 Visible = true
             };
 
@@ -49,6 +53,35 @@ namespace SilentOrbit.FixVolume
             };
 
             trayIcon.Click += TrayIcon_Click;
+        }
+
+        void BuildVolumeMenu(MenuItem volume)
+        {
+            var dic = new Dictionary<int, MenuItem>();
+
+            for (int n = 100; n > 0; n -= 5)
+            {
+                var vol = new MenuItem(n + "%", GenerateVolumeEvent(n));
+                volume.MenuItems.Add(vol);
+                dic.Add(n, vol);
+            }
+
+            volume.Popup += (object sender, EventArgs e) =>
+            {
+                foreach (var m in dic.Values)
+                    m.Checked = false;
+
+                if (dic.TryGetValue(VolumeWatcher.Target, out var menu))
+                    menu.Checked = true;
+            };
+        }
+
+        EventHandler GenerateVolumeEvent(int n)
+        {
+            return (object sender, EventArgs e) =>
+            {
+                VolumeWatcher.SetVolume(n);
+            };
         }
 
         void ToggleAutoMute(object sender, EventArgs e)
@@ -137,12 +170,14 @@ namespace SilentOrbit.FixVolume
             trayIcon.Visible = false;
             trayIcon.Visible = true;
 
-            var title = volume == 0 ? "Muted" : "Full Volume";
+            var title = volume == 0 ? "Microphone Muted" : "Microphone ON";
             var message = volume + " %";
 
-            trayIcon.ShowBalloonTip(100, title, message, ToolTipIcon.Info);
             Text = title + ": " + message;
             trayIcon.Icon = volume == 0 ? Muted : FullVolume;
+
+            //Show tip after chaning the tray icon
+            trayIcon.ShowBalloonTip(100, title, message, ToolTipIcon.Info);
         }
 
         #endregion

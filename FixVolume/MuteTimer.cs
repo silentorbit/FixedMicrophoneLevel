@@ -43,7 +43,7 @@ namespace SilentOrbit.FixVolume
             if (VolumeWatcher.Muted == false)
             {
                 Console.WriteLine($"Muting for {msMuteTime} ms");
-                VolumeWatcher.Muted = true;
+                VolumeWatcher.SetMuted(true);
             }
             timer.Change(msMuteTime, Timeout.Infinite);
         }
@@ -55,7 +55,7 @@ namespace SilentOrbit.FixVolume
             if (VolumeWatcher.Muted)
             {
                 Console.WriteLine($"Unmuted after {msMuteTime} ms");
-                VolumeWatcher.Muted = false;
+                VolumeWatcher.SetMuted(false);
             }
         }
 
