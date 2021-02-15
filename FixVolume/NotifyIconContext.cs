@@ -31,7 +31,7 @@ namespace SilentOrbit.FixVolume
             mapCapsLock.MenuItems.Add(mapCapsLockReset);
             mute = new MenuItem("&Mute", (s, e) => VolumeWatcher.ToggleMute());
 
-            var about = new MenuItem("About", (s, e) => Process.Start("https://github.com/hultqvist/FixVolume"));
+            var about = new MenuItem("About", (s, e) => Process.Start("https://github.com/SilentOrbit/FixVolume"));
             var exit = new MenuItem("E&xit", (s, e) => Application.Exit());
 
             trayIcon = new NotifyIcon()
