@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace SilentOrbit.FixVolume
+namespace SilentOrbit.FixedMicrophoneLevel
 {
     /// <summary>
     /// Triggered by KeyMonitoring and will mute the mic for a short while before it's unmuted again.
@@ -35,15 +35,15 @@ namespace SilentOrbit.FixVolume
 
         void ResetInstance()
         {
-            if (VolumeWatcher.Muted && !typingMute)
+            if (LevelWatcher.Muted && !typingMute)
                 return; //Keep muted
 
             typingMute = true;
 
-            if (VolumeWatcher.Muted == false)
+            if (LevelWatcher.Muted == false)
             {
                 Console.WriteLine($"Muting for {msMuteTime} ms");
-                VolumeWatcher.SetMuted(true);
+                LevelWatcher.SetMuted(true);
             }
             timer.Change(msMuteTime, Timeout.Infinite);
         }
@@ -52,10 +52,10 @@ namespace SilentOrbit.FixVolume
         {
             typingMute = false;
 
-            if (VolumeWatcher.Muted)
+            if (LevelWatcher.Muted)
             {
                 Console.WriteLine($"Unmuted after {msMuteTime} ms");
-                VolumeWatcher.SetMuted(false);
+                LevelWatcher.SetMuted(false);
             }
         }
 

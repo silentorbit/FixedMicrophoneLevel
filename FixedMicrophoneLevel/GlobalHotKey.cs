@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SilentOrbit.FixVolume
+namespace SilentOrbit.FixedMicrophoneLevel
 {
     class GlobalHotKey : NativeWindow, IDisposable
     {
@@ -59,9 +59,9 @@ namespace SilentOrbit.FixVolume
                 ModifierKeys modifier = (ModifierKeys)((int)m.LParam & 0xFFFF);
 
                 if (key == Keys.CapsLock)
-                    VolumeWatcher.SetMuted(Control.IsKeyLocked(Keys.CapsLock));
+                    LevelWatcher.SetMuted(Control.IsKeyLocked(Keys.CapsLock));
                 else
-                    VolumeWatcher.ToggleMute();
+                    LevelWatcher.ToggleMute();
             }
         }
 

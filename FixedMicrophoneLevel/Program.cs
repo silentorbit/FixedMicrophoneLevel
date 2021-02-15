@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SilentOrbit.FixVolume
+namespace SilentOrbit.FixedMicrophoneLevel
 {
     static class Program
     {
@@ -26,7 +26,7 @@ namespace SilentOrbit.FixVolume
             Application.SetCompatibleTextRenderingDefault(false);
 
             using (var context = new NotifyIconContext())
-            using (var volume = new VolumeWatcher())
+            using (var level = new LevelWatcher())
             using (var hotkey = new GlobalHotKey())
             using (var timer = new MuteTimer())
             using (var keymon = new KeyMonitoring())

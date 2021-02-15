@@ -8,19 +8,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SilentOrbit.FixVolume
+namespace SilentOrbit.FixedMicrophoneLevel
 {
-    class VolumeWatcher : IDisposable
+    class LevelWatcher : IDisposable
     {
         readonly Thread t;
 
-        public static int Target => Muted ? 0 : Volume;
-        public static int Volume { get; private set; } = 100;
+        public static int Target => Muted ? 0 : Level;
+        public static int Level { get; private set; } = 100;
         public static bool Muted { get; private set; }
 
         static CoreAudioController audio;
 
-        public VolumeWatcher()
+        public LevelWatcher()
         {
             t = new Thread(Run);
             t.IsBackground = true;
@@ -42,12 +42,12 @@ namespace SilentOrbit.FixVolume
                 {
                     audio = ctrl;
 
-                    //NotifyIconContext.Info(1000, "Active", "Forcing all capture levels to " + Volume + "%");
-                    NotifyIconContext.Volume(Target);
+                    //NotifyIconContext.Info(1000, "Active", "Forcing all capture levels to " + Level + "%");
+                    NotifyIconContext.Level(Target);
 
                     while (true)
                     {
-                        UpdateVolume(reportVolumeFix: true);
+                        UpdateLevel(reportFix: true);
                         Thread.Sleep(1000);
                     }
                 }
@@ -64,7 +64,7 @@ namespace SilentOrbit.FixVolume
             }
         }
 
-        static void UpdateVolume(bool reportVolumeFix)
+        static void UpdateLevel(bool reportFix)
         {
             if (audio == null)
                 return;
@@ -72,7 +72,7 @@ namespace SilentOrbit.FixVolume
             //Communication capture
             {
                 var dev = audio.GetDefaultDevice(AudioSwitcher.AudioApi.DeviceType.Capture, AudioSwitcher.AudioApi.Role.Communications);
-                UpdateVolume(dev, reportVolumeFix);
+                UpdateLevel(dev, reportFix);
             }
             foreach (var dev in audio.GetDevices())
             {
@@ -81,12 +81,12 @@ namespace SilentOrbit.FixVolume
 
                 if ((dev.DeviceType & AudioSwitcher.AudioApi.DeviceType.Capture) != 0)
                 {
-                    UpdateVolume(dev, reportVolumeFix);
+                    UpdateLevel(dev, reportFix);
                 }
             }
         }
 
-        static void UpdateVolume(CoreAudioDevice dev, bool reportVolumeFix)
+        static void UpdateLevel(CoreAudioDevice dev, bool reportFix)
         {
             var orig = dev.IsMuted ? 0 : dev.Volume;
             if (orig != Target)
@@ -95,8 +95,8 @@ namespace SilentOrbit.FixVolume
                 if (Target != 0)
                     dev.Volume = Target;
 
-                if (reportVolumeFix)
-                    NotifyIconContext.Warning(5000, "Forced volume " + orig + " --> " + Target + " %", dev.FullName);
+                if (reportFix)
+                    NotifyIconContext.Warning(5000, "Forced level " + orig + " --> " + Target + " %", dev.FullName);
             }
         }
 
@@ -106,19 +106,19 @@ namespace SilentOrbit.FixVolume
         {
             Muted = muted;
 
-            UpdateVolume(reportVolumeFix: false);
+            UpdateLevel(reportFix: false);
 
-            NotifyIconContext.Volume(Target);
+            NotifyIconContext.Level(Target);
         }
 
-        public static void SetVolume(int volume)
+        public static void SetLevel(int level)
         {
             Muted = false;
-            Volume = volume;
+            Level = level;
 
-            UpdateVolume(reportVolumeFix: false);
+            UpdateLevel(reportFix: false);
 
-            NotifyIconContext.Volume(Target);
+            NotifyIconContext.Level(Target);
         }
     }
 }

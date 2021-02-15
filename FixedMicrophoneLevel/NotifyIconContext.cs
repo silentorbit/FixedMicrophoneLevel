@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace SilentOrbit.FixVolume
+namespace SilentOrbit.FixedMicrophoneLevel
 {
     internal class NotifyIconContext : ApplicationContext
     {
@@ -12,9 +12,9 @@ namespace SilentOrbit.FixVolume
 
         static readonly Icon StartupInactive = Icon.FromHandle(Resource.mic_gray.GetHicon());
         static readonly Icon Muted = Icon.FromHandle(Resource.mic_off.GetHicon());
-        static readonly Icon FullVolume = Icon.FromHandle(Resource.mic_on.GetHicon());
+        static readonly Icon Active = Icon.FromHandle(Resource.mic_on.GetHicon());
 
-        readonly MenuItem volume;
+        readonly MenuItem level;
         readonly MenuItem autoStart;
         readonly MenuItem mapCapsLock;
         readonly MenuItem mapCapsLockSet;
@@ -24,8 +24,8 @@ namespace SilentOrbit.FixVolume
 
         public NotifyIconContext()
         {
-            volume = new MenuItem("&Volume");
-            BuildVolumeMenu(volume);
+            level = new MenuItem("&Level");
+            BuildLevelMenu(level);
             autoStart = new MenuItem("&Auto Start", ToggleAutoStart);
             autoMute = new MenuItem("Auto mute on key presses", ToggleAutoMute);
             mapCapsLock = new MenuItem("Map &CapsLock");
@@ -33,15 +33,15 @@ namespace SilentOrbit.FixVolume
             mapCapsLockReset = new MenuItem("Reset CapsLock", ResetCapsLock);
             mapCapsLock.MenuItems.Add(mapCapsLockSet);
             mapCapsLock.MenuItems.Add(mapCapsLockReset);
-            mute = new MenuItem("&Mute", (s, e) => VolumeWatcher.ToggleMute());
+            mute = new MenuItem("&Mute", (s, e) => LevelWatcher.ToggleMute());
 
-            var about = new MenuItem("About", (s, e) => Process.Start("https://github.com/SilentOrbit/FixVolume"));
+            var about = new MenuItem("About", (s, e) => Process.Start("https://github.com/SilentOrbit/FixedMicrophoneLevel"));
             var exit = new MenuItem("E&xit", (s, e) => Application.Exit());
 
             trayIcon = new NotifyIcon()
             {
                 Icon = StartupInactive,
-                ContextMenu = new ContextMenu(new MenuItem[] { volume, mute, autoMute, autoStart, mapCapsLock, about, exit }),
+                ContextMenu = new ContextMenu(new MenuItem[] { level, mute, autoMute, autoStart, mapCapsLock, about, exit }),
                 Visible = true
             };
 
@@ -49,38 +49,38 @@ namespace SilentOrbit.FixVolume
             {
                 autoStart.Checked = RegAutoStart.Get();
                 autoMute.Checked = KeyMonitoring.Enabled;
-                mute.Checked = VolumeWatcher.Volume == 0;
+                mute.Checked = LevelWatcher.Level == 0;
             };
 
             trayIcon.Click += TrayIcon_Click;
         }
 
-        void BuildVolumeMenu(MenuItem volume)
+        void BuildLevelMenu(MenuItem levelMenu)
         {
             var dic = new Dictionary<int, MenuItem>();
 
             for (int n = 100; n > 0; n -= 5)
             {
-                var vol = new MenuItem(n + "%", GenerateVolumeEvent(n));
-                volume.MenuItems.Add(vol);
+                var vol = new MenuItem(n + "%", GenerateLevelEvent(n));
+                levelMenu.MenuItems.Add(vol);
                 dic.Add(n, vol);
             }
 
-            volume.Popup += (object sender, EventArgs e) =>
+            levelMenu.Popup += (object sender, EventArgs e) =>
             {
                 foreach (var m in dic.Values)
                     m.Checked = false;
 
-                if (dic.TryGetValue(VolumeWatcher.Target, out var menu))
+                if (dic.TryGetValue(LevelWatcher.Target, out var menu))
                     menu.Checked = true;
             };
         }
 
-        EventHandler GenerateVolumeEvent(int n)
+        EventHandler GenerateLevelEvent(int n)
         {
             return (object sender, EventArgs e) =>
             {
-                VolumeWatcher.SetVolume(n);
+                LevelWatcher.SetLevel(n);
             };
         }
 
@@ -94,7 +94,7 @@ namespace SilentOrbit.FixVolume
             if (e is MouseEventArgs m)
             {
                 if (m.Button == MouseButtons.Left)
-                    VolumeWatcher.ToggleMute();
+                    LevelWatcher.ToggleMute();
             }
         }
 
@@ -164,17 +164,17 @@ namespace SilentOrbit.FixVolume
             }
         }
 
-        public static void Volume(int volume)
+        public static void Level(int level)
         {
             //Hack, hide previous messages
             trayIcon.Visible = false;
             trayIcon.Visible = true;
 
-            var title = volume == 0 ? "Microphone Muted" : "Microphone ON";
-            var message = volume + " %";
+            var title = level == 0 ? "Microphone Muted" : "Microphone ON";
+            var message = level + " %";
 
             Text = title + ": " + message;
-            trayIcon.Icon = volume == 0 ? Muted : FullVolume;
+            trayIcon.Icon = level == 0 ? Muted : Active;
 
             //Show tip after chaning the tray icon
             trayIcon.ShowBalloonTip(100, title, message, ToolTipIcon.Info);

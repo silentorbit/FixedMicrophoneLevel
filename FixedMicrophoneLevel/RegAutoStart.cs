@@ -6,12 +6,12 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SilentOrbit.FixVolume
+namespace SilentOrbit.FixedMicrophoneLevel
 {
     static class RegAutoStart
     {
         const string RUN_LOCATION = @"Software\Microsoft\Windows\CurrentVersion\Run";
-        const string keyName = "SilenotOrbit.FixVolume";
+        const string keyName = "SilenotOrbit.FixedMicrophoneLevel";
 
         static RegistryKey SubKey => Registry.CurrentUser.CreateSubKey(RUN_LOCATION);
         static string Path => Assembly.GetExecutingAssembly().Location;

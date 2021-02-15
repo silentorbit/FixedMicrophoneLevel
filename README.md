@@ -10,7 +10,7 @@ Force all microphone levels to stay fixed.
 
 ## Microphone level control
 
-Right click Tray icon, click volume.
+Right click Tray icon, click "Level", choose the microphone level.
 
 ## Toggle between mute and full level
 
@@ -21,5 +21,5 @@ Right click Tray icon, click volume.
 ## Autostart
 
 1. Place the files in a safe place on your harddrive
-2. Start `FixVolume.exe`
+2. Start `FixedMicrophoneLevel.exe`
 3. Right click the system tray icon and select `Auto Start`
