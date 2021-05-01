@@ -26,5 +26,10 @@ namespace SilentOrbit.FixedMicrophoneLevel.Config
         /// Prevent loud keyboards from being heard.
         /// </summary>
         public bool MuteOnKeyPress { get; set; }
+
+        /// <summary>
+        /// Show windows notification when microphone level is corrected
+        /// </summary>
+        public bool ShowNotifications { get; set; }
     }
 }

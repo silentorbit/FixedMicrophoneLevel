@@ -25,6 +25,7 @@ namespace SilentOrbit.FixedMicrophoneLevel.UI
         readonly MenuItem mapCapsLockReset;
         readonly MenuItem mute;
         readonly MenuItem autoMute;
+        readonly MenuItem showNotifications;
 
         public NotifyIconContext()
         {
@@ -38,6 +39,7 @@ namespace SilentOrbit.FixedMicrophoneLevel.UI
             mapCapsLock.MenuItems.Add(mapCapsLockSet);
             mapCapsLock.MenuItems.Add(mapCapsLockReset);
             mute = new MenuItem("&Mute", (s, e) => ConfigManager.ToggleMute());
+            showNotifications = new MenuItem("Show notifications", ToggleShowNotifications);
 
             var about = new MenuItem("About", (s, e) => Process.Start("https://github.com/SilentOrbit/FixedMicrophoneLevel"));
             var exit = new MenuItem("E&xit", (s, e) => Application.Exit());
@@ -45,7 +47,7 @@ namespace SilentOrbit.FixedMicrophoneLevel.UI
             trayIcon = new NotifyIcon()
             {
                 Icon = StartupInactive,
-                ContextMenu = new ContextMenu(new MenuItem[] { level, mute, autoMute, autoStart, mapCapsLock, about, exit }),
+                ContextMenu = new ContextMenu(new MenuItem[] { level, mute, autoMute, autoStart, mapCapsLock, showNotifications, about, exit }),
                 Visible = true
             };
 
@@ -54,6 +56,7 @@ namespace SilentOrbit.FixedMicrophoneLevel.UI
                 autoStart.Checked = RegAutoStart.Get();
                 autoMute.Checked = ConfigManager.MuteOnKeyPress;
                 mute.Checked = ConfigManager.Target == 0;
+                showNotifications.Checked = ConfigManager.ShowNotifications;
             };
 
             trayIcon.Click += TrayIcon_Click;
@@ -91,6 +94,11 @@ namespace SilentOrbit.FixedMicrophoneLevel.UI
         void ToggleAutoMute(object sender, EventArgs e)
         {
             ConfigManager.MuteOnKeyPress = !ConfigManager.MuteOnKeyPress;
+        }
+
+        void ToggleShowNotifications(object sender, EventArgs e)
+        {
+            ConfigManager.ShowNotifications = !ConfigManager.ShowNotifications;
         }
 
         void TrayIcon_Click(object sender, EventArgs e)

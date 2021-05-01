@@ -85,7 +85,17 @@ namespace SilentOrbit.FixedMicrophoneLevel.Config
                 NotifyIconContext.Level(Target);
             }
         }
-        
+
+        public static bool ShowNotifications
+        {
+            get => config.ShowNotifications;
+            set
+            {
+                config.ShowNotifications = value;
+                Save();
+            }
+        }
+
         public static void SetLevel(int level)
         {
             config.Muted = false;
