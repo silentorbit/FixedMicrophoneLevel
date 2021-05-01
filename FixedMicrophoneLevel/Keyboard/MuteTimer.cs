@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using SilentOrbit.FixedMicrophoneLevel.Microphone;
 
-namespace SilentOrbit.FixedMicrophoneLevel
+namespace SilentOrbit.FixedMicrophoneLevel.Keyboard
 {
     /// <summary>
     /// Triggered by KeyMonitoring and will mute the mic for a short while before it's unmuted again.

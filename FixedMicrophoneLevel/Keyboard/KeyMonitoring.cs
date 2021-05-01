@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace SilentOrbit.FixedMicrophoneLevel
+namespace SilentOrbit.FixedMicrophoneLevel.Keyboard
 {
     /// <summary>
     /// Monitor for key presses and mute the mic for a short while.

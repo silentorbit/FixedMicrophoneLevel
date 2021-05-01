@@ -1,4 +1,8 @@
 ﻿using AudioSwitcher.AudioApi.CoreAudio;
+using SilentOrbit.FixedMicrophoneLevel.Keyboard;
+using SilentOrbit.FixedMicrophoneLevel.Microphone;
+using SilentOrbit.FixedMicrophoneLevel.Reg;
+using SilentOrbit.FixedMicrophoneLevel.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;

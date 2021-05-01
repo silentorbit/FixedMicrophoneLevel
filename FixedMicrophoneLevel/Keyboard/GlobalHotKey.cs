@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SilentOrbit.FixedMicrophoneLevel.Microphone;
+using SilentOrbit.FixedMicrophoneLevel.UI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -6,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SilentOrbit.FixedMicrophoneLevel
+namespace SilentOrbit.FixedMicrophoneLevel.Keyboard
 {
     class GlobalHotKey : NativeWindow, IDisposable
     {

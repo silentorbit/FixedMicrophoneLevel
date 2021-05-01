@@ -1,4 +1,5 @@
 ﻿using AudioSwitcher.AudioApi.CoreAudio;
+using SilentOrbit.FixedMicrophoneLevel.UI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SilentOrbit.FixedMicrophoneLevel
+namespace SilentOrbit.FixedMicrophoneLevel.Microphone
 {
     class LevelWatcher : IDisposable
     {

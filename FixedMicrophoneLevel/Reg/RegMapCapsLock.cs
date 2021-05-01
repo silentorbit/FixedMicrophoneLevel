@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SilentOrbit.FixedMicrophoneLevel
+namespace SilentOrbit.FixedMicrophoneLevel.Reg
 {
     static class RegMapCapsLock
     {

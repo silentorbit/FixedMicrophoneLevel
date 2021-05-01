@@ -1,10 +1,13 @@
-﻿using System;
+﻿using SilentOrbit.FixedMicrophoneLevel.Keyboard;
+using SilentOrbit.FixedMicrophoneLevel.Microphone;
+using SilentOrbit.FixedMicrophoneLevel.Reg;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace SilentOrbit.FixedMicrophoneLevel
+namespace SilentOrbit.FixedMicrophoneLevel.UI
 {
     internal class NotifyIconContext : ApplicationContext
     {
