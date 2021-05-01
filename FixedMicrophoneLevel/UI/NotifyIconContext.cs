@@ -1,4 +1,5 @@
-﻿using SilentOrbit.FixedMicrophoneLevel.Keyboard;
+﻿using SilentOrbit.FixedMicrophoneLevel.Config;
+using SilentOrbit.FixedMicrophoneLevel.Keyboard;
 using SilentOrbit.FixedMicrophoneLevel.Microphone;
 using SilentOrbit.FixedMicrophoneLevel.Reg;
 using System;
@@ -36,7 +37,7 @@ namespace SilentOrbit.FixedMicrophoneLevel.UI
             mapCapsLockReset = new MenuItem("Reset CapsLock", ResetCapsLock);
             mapCapsLock.MenuItems.Add(mapCapsLockSet);
             mapCapsLock.MenuItems.Add(mapCapsLockReset);
-            mute = new MenuItem("&Mute", (s, e) => LevelWatcher.ToggleMute());
+            mute = new MenuItem("&Mute", (s, e) => ConfigManager.ToggleMute());
 
             var about = new MenuItem("About", (s, e) => Process.Start("https://github.com/SilentOrbit/FixedMicrophoneLevel"));
             var exit = new MenuItem("E&xit", (s, e) => Application.Exit());
@@ -51,8 +52,8 @@ namespace SilentOrbit.FixedMicrophoneLevel.UI
             trayIcon.ContextMenu.Popup += (object sender, EventArgs e) =>
             {
                 autoStart.Checked = RegAutoStart.Get();
-                autoMute.Checked = KeyMonitoring.Enabled;
-                mute.Checked = LevelWatcher.Level == 0;
+                autoMute.Checked = ConfigManager.MuteOnKeyPress;
+                mute.Checked = ConfigManager.Target == 0;
             };
 
             trayIcon.Click += TrayIcon_Click;
@@ -74,7 +75,7 @@ namespace SilentOrbit.FixedMicrophoneLevel.UI
                 foreach (var m in dic.Values)
                     m.Checked = false;
 
-                if (dic.TryGetValue(LevelWatcher.Target, out var menu))
+                if (dic.TryGetValue(ConfigManager.Target, out var menu))
                     menu.Checked = true;
             };
         }
@@ -83,13 +84,13 @@ namespace SilentOrbit.FixedMicrophoneLevel.UI
         {
             return (object sender, EventArgs e) =>
             {
-                LevelWatcher.SetLevel(n);
+                ConfigManager.SetLevel(n);
             };
         }
 
         void ToggleAutoMute(object sender, EventArgs e)
         {
-            KeyMonitoring.Enabled = !KeyMonitoring.Enabled;
+            ConfigManager.MuteOnKeyPress = !ConfigManager.MuteOnKeyPress;
         }
 
         void TrayIcon_Click(object sender, EventArgs e)
@@ -97,7 +98,7 @@ namespace SilentOrbit.FixedMicrophoneLevel.UI
             if (e is MouseEventArgs m)
             {
                 if (m.Button == MouseButtons.Left)
-                    LevelWatcher.ToggleMute();
+                    ConfigManager.ToggleMute();
             }
         }
 

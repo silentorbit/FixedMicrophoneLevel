@@ -1,4 +1,5 @@
-﻿using SilentOrbit.FixedMicrophoneLevel.Microphone;
+﻿using SilentOrbit.FixedMicrophoneLevel.Config;
+using SilentOrbit.FixedMicrophoneLevel.Microphone;
 using SilentOrbit.FixedMicrophoneLevel.UI;
 using System;
 using System.Collections.Generic;
@@ -61,9 +62,9 @@ namespace SilentOrbit.FixedMicrophoneLevel.Keyboard
                 ModifierKeys modifier = (ModifierKeys)((int)m.LParam & 0xFFFF);
 
                 if (key == Keys.CapsLock)
-                    LevelWatcher.SetMuted(Control.IsKeyLocked(Keys.CapsLock));
+                    ConfigManager.Muted = Control.IsKeyLocked(Keys.CapsLock);
                 else
-                    LevelWatcher.ToggleMute();
+                    ConfigManager.ToggleMute();
             }
         }
 

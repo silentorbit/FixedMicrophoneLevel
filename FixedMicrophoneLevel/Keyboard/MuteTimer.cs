@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using SilentOrbit.FixedMicrophoneLevel.Microphone;
+using SilentOrbit.FixedMicrophoneLevel.Config;
 
 namespace SilentOrbit.FixedMicrophoneLevel.Keyboard
 {
@@ -36,15 +37,15 @@ namespace SilentOrbit.FixedMicrophoneLevel.Keyboard
 
         void ResetInstance()
         {
-            if (LevelWatcher.Muted && !typingMute)
+            if (ConfigManager.Muted && !typingMute)
                 return; //Keep muted
 
             typingMute = true;
 
-            if (LevelWatcher.Muted == false)
+            if (ConfigManager.Muted == false)
             {
                 Console.WriteLine($"Muting for {msMuteTime} ms");
-                LevelWatcher.SetMuted(true);
+                ConfigManager.Muted = true;
             }
             timer.Change(msMuteTime, Timeout.Infinite);
         }
@@ -53,10 +54,10 @@ namespace SilentOrbit.FixedMicrophoneLevel.Keyboard
         {
             typingMute = false;
 
-            if (LevelWatcher.Muted)
+            if (ConfigManager.Muted)
             {
                 Console.WriteLine($"Unmuted after {msMuteTime} ms");
-                LevelWatcher.SetMuted(false);
+                ConfigManager.Muted = false;
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using AudioSwitcher.AudioApi.CoreAudio;
+using SilentOrbit.FixedMicrophoneLevel.Config;
 using SilentOrbit.FixedMicrophoneLevel.UI;
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,6 @@ namespace SilentOrbit.FixedMicrophoneLevel.Microphone
     class LevelWatcher : IDisposable
     {
         readonly Thread t;
-
-        public static int Target => Muted ? 0 : Level;
-        public static int Level { get; private set; } = 100;
-        public static bool Muted { get; private set; }
 
         static CoreAudioController audio;
 
@@ -44,7 +41,7 @@ namespace SilentOrbit.FixedMicrophoneLevel.Microphone
                     audio = ctrl;
 
                     //NotifyIconContext.Info(1000, "Active", "Forcing all capture levels to " + Level + "%");
-                    NotifyIconContext.Level(Target);
+                    NotifyIconContext.Level(ConfigManager.Target);
 
                     while (true)
                     {
@@ -65,7 +62,7 @@ namespace SilentOrbit.FixedMicrophoneLevel.Microphone
             }
         }
 
-        static void UpdateLevel(bool reportFix)
+        public static void UpdateLevel(bool reportFix)
         {
             if (audio == null)
                 return;
@@ -89,37 +86,18 @@ namespace SilentOrbit.FixedMicrophoneLevel.Microphone
 
         static void UpdateLevel(CoreAudioDevice dev, bool reportFix)
         {
+            var target = ConfigManager.Target;
+
             var orig = dev.IsMuted ? 0 : dev.Volume;
-            if (orig != Target)
+            if (orig != target)
             {
-                dev.Mute(Target == 0);
-                if (Target != 0)
-                    dev.Volume = Target;
+                dev.Mute(target == 0);
+                if (target != 0)
+                    dev.Volume = target;
 
                 if (reportFix)
-                    NotifyIconContext.Warning(5000, "Forced level " + orig + " --> " + Target + " %", dev.FullName);
+                    NotifyIconContext.Warning(5000, "Forced level " + orig + " --> " + target + " %", dev.FullName);
             }
-        }
-
-        public static void ToggleMute() => SetMuted(!Muted);
-
-        public static void SetMuted(bool muted)
-        {
-            Muted = muted;
-
-            UpdateLevel(reportFix: false);
-
-            NotifyIconContext.Level(Target);
-        }
-
-        public static void SetLevel(int level)
-        {
-            Muted = false;
-            Level = level;
-
-            UpdateLevel(reportFix: false);
-
-            NotifyIconContext.Level(Target);
         }
     }
 }

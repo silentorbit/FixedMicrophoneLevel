@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using SilentOrbit.FixedMicrophoneLevel.Config;
 
 namespace SilentOrbit.FixedMicrophoneLevel.Keyboard
 {
@@ -35,8 +36,6 @@ namespace SilentOrbit.FixedMicrophoneLevel.Keyboard
         const int WM_KEYDOWN = 0x0100;
         static LowLevelKeyboardProc _proc = HookCallback;
         static IntPtr _hookID = IntPtr.Zero;
-
-        public static bool Enabled { get; set; } = true;
 
         public KeyMonitoring()
         {
@@ -72,7 +71,7 @@ namespace SilentOrbit.FixedMicrophoneLevel.Keyboard
                         break;
 
                     default:
-                        if (Enabled)
+                        if (ConfigManager.MuteOnKeyPress)
                             MuteTimer.Reset();
                         break;
                 }

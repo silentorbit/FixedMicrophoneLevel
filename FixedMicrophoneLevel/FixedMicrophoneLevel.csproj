@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>SilentOrbit.FixedMicrophoneLevel</RootNamespace>
     <AssemblyName>FixedMicrophoneLevel</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -53,6 +53,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\ConfigManager.cs" />
+    <Compile Include="Config\MicConfig.cs" />
     <Compile Include="Keyboard\GlobalHotKey.cs" />
     <Compile Include="Keyboard\KeyMonitoring.cs" />
     <Compile Include="Keyboard\MuteTimer.cs" />
@@ -71,6 +73,9 @@
   <ItemGroup>
     <PackageReference Include="AudioSwitcher.AudioApi.CoreAudio">
       <Version>3.0.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Text.Json">
+      <Version>5.0.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
