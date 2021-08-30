@@ -59,10 +59,14 @@ namespace SilentOrbit.FixedMicrophoneLevel.Keyboard
             {
                 var vkCode = (Keys)Marshal.ReadInt32(lParam);
                 //Console.WriteLine(vkCode);
+                
+                if (Keys.Scroll == vkCode)
+                    ConfigManager.Muted = Control.IsKeyLocked(Keys.Scroll);
 
                 switch (vkCode)
                 {
                     //Ignore keys that are used in class GlobalHotKey
+                    case Keys.Scroll:
                     case Keys.CapsLock:
                     case Keys.F13:
                     case Keys.LWin:
