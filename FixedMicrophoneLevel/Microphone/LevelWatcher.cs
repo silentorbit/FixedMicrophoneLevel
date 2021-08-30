@@ -95,7 +95,7 @@ namespace SilentOrbit.FixedMicrophoneLevel.Microphone
                 if (target != 0)
                     dev.Volume = target;
 
-                if (reportFix)
+                if (reportFix && ConfigManager.ShowNotifications)
                     NotifyIconContext.Warning(5000, "Forced level " + orig + " --> " + target + " %", dev.FullName);
             }
         }

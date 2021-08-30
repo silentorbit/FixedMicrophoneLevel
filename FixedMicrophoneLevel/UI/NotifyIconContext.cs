@@ -188,8 +188,9 @@ namespace SilentOrbit.FixedMicrophoneLevel.UI
             Text = title + ": " + message;
             trayIcon.Icon = level == 0 ? Muted : Active;
 
-            //Show tip after chaning the tray icon
-            trayIcon.ShowBalloonTip(100, title, message, ToolTipIcon.Info);
+            //Show tip after changing the tray icon
+            if (ConfigManager.ShowNotifications)
+                trayIcon.ShowBalloonTip(100, title, message, ToolTipIcon.Info);
         }
 
         #endregion
