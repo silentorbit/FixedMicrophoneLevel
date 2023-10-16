@@ -72,7 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AudioSwitcher.AudioApi.CoreAudio">
-      <Version>3.0.0.1</Version>
+      <Version>3.0.3</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
       <Version>5.0.2</Version>

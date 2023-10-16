@@ -74,13 +74,38 @@ namespace SilentOrbit.FixedMicrophoneLevel.Microphone
             }
             foreach (var dev in audio.GetDevices())
             {
-                if (dev.State != AudioSwitcher.AudioApi.DeviceState.Active)
-                    continue;
-
-                if ((dev.DeviceType & AudioSwitcher.AudioApi.DeviceType.Capture) != 0)
+                try
                 {
-                    UpdateLevel(dev, reportFix);
+                    if (dev.State != AudioSwitcher.AudioApi.DeviceState.Active)
+                        continue;
+
+                    if ((dev.DeviceType & AudioSwitcher.AudioApi.DeviceType.Capture) != 0)
+                    {
+                        UpdateLevel(dev, reportFix);
+                    }
                 }
+                catch (Exception ex)
+                {
+                    ShowError(dev, ex);
+                }
+            }
+        }
+
+        static List<Guid> supressError = new List<Guid>();
+
+        static void ShowError(CoreAudioDevice dev, Exception ex)
+        {
+            if (supressError.Contains(dev.Id))
+                return;
+            supressError.Add(dev.Id);
+
+            if (ex is AggregateException ae && ae.InnerException != null)
+            {
+                ShowError(dev, ae.InnerException);
+            }
+            else
+            {
+                NotifyIconContext.Error(6000, dev.FullName + ":\n" + ex.GetType().Name, ex.Message);
             }
         }
 
